@@ -31,8 +31,8 @@ def start_panel(_):
                 style=ButtonStyle.PRIMARY
             ),
             InlineKeyboardButton(
-                text="💳 ᴘᴀʏᴍᴇɴᴛ ɢᴀᴛᴇᴡᴀʏ",
-                url="https://darkpay.co",
+                text="『 🇻⃪͢𝗜𝗣_🇽⃪͢_𝗬𝗧_𝗔𝗣𝗜 』",
+                url="https://t.me/VIP_X_YT_API_BOT",
                 style=ButtonStyle.DANGER
             )
         ]
@@ -74,8 +74,8 @@ def private_panel(_):
                 style=ButtonStyle.PRIMARY
             ),
             InlineKeyboardButton(
-                text="💳 ᴘᴀʏᴍᴇɴᴛ ɢᴀᴛᴇᴡᴀʏ",
-                url="https://darkpay.co",
+                text="『 🇻⃪͢𝗜𝗣_🇽⃪͢_𝗬𝗧_𝗔𝗣𝗜 』",
+                url="https://t.me/VIP_X_YT_API_BOT",
                 style=ButtonStyle.DANGER
             )
         ]
