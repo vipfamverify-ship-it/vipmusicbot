@@ -1,0 +1,54 @@
+Bhai, bilkul sahi pakda! 🎯
+
+✅ Haan, bilkul!
+
+Jab bhi tu kisi code mein Premium Emoji add karna chahe, toh bas ye line use kare:
+
+
+"<emoji id=5409098988156629257>✅</emoji>"
+
+
+📝 Example - Kaise use kare:
+
+1. Caption/Message mein:
+
+
+await message.reply_text(
+    "<emoji id=5409098988156629257>✅</emoji> <b>Task Completed!</b>",
+    parse_mode=ParseMode.HTML
+)
+
+
+2. Button text mein (agar kaam kare):
+
+
+InlineKeyboardButton(
+    text="<emoji id=5409098988156629257>✅</emoji> DONE",
+    callback_data="done",
+    style=ButtonStyle.SUCCESS
+)
+
+
+3. Edit message mein:
+
+
+await message.edit_text(
+    "<emoji id=5201873447554145566>⭐</emoji> <b>Loading...</b>",
+    parse_mode=ParseMode.HTML
+)
+
+
+🎯 Tumhare Premium Emoji IDs:
+
+ID Emoji Code
+5201873447554145566 ✨/🎉/⭐ <emoji id=5201873447554145566>✨</emoji>
+5409098988156629257 ✅/🟢/💳 <emoji id=5409098988156629257>✅</emoji>
+5422814644093868925 🔴/🛒/🆘 <emoji id=5422814644093868925>🔴</emoji>
+
+⚠️ Important:
+
+1. ParseMode: parse_mode=ParseMode.HTML hona chahiye
+2. Bas message/caption mein kaam karega (buttons mein kaam nahi karta)
+3. Sirf Premium users ko dikhega (non-premium ko normal emoji dikhega)
+
+Bas itna hi! 🔥
