@@ -25,7 +25,7 @@ heroku3
 # --- Telegram / Music bot libs ---
 kurigram>=2.2.23
 py-tgcalls==0.9.7
-ntgcalls==2.0.6
+git+https://github.com/pytgcalls/ntgcalls.git@v2.0.6
 pytgcrypto
 spotipy
 unidecode
@@ -37,7 +37,7 @@ speedtest-cli
 # --- YouTube / streaming ---
 yt-dlp
 youtube-search-python
+py-yt-search==0.7.2
 
 # --- HTTP2 client (locked for stability) ---
 httpx[http2]
-py-yt-search
