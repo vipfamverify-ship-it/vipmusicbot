@@ -1,0 +1,43 @@
+# --- Core async dependencies ---
+aiofiles
+aiohttp
+beautifulsoup4
+dnspython
+
+# --- Media & processing ---
+ffmpeg-python
+hachoir
+opencv-python
+pillow==9.5.0
+numpy
+
+# --- System & performance ---
+psutil
+uvloop==0.17.0; sys_platform != "win32"
+
+# --- Database & API ---
+motor
+python-dotenv
+pyyaml
+requests
+heroku3
+
+# --- Telegram / Music bot libs ---
+kurigram>=2.2.23
+py-tgcalls==0.9.7
+ntgcalls==2.0.6
+pytgcrypto
+spotipy
+unidecode
+
+# --- Git & utility ---
+gitpython
+speedtest-cli
+
+# --- YouTube / streaming ---
+yt-dlp
+youtube-search-python
+
+# --- HTTP2 client (locked for stability) ---
+httpx[http2]
+py-yt-search
