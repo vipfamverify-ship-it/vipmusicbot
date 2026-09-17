@@ -8,11 +8,21 @@ from pyrogram.types import Message
 from py_yt import VideosSearch, Playlist
 import aiohttp
 
+# ==================== YOUR API ====================
 API_URL = "https://vipxofficial.in"
-
-API_KEY = "vipxEyvgz7PZvT77O7PnGu7itFhY6wmy" ## Get This API KEY FROM TELEGRAM BOT USERNAME: @SHRUTIAPIBOT 
+API_KEY = "vipxHxpxfKsPXEJGUbjStpCDBNMrrNCU"
+# ==================================================
 
 DOWNLOAD_DIR = "downloads"
+
+# ✅ Fast TCP Connector - Connection pool with caching
+FAST_CONNECTOR = aiohttp.TCPConnector(
+    limit=100,           # Max total connections
+    limit_per_host=50,   # Max per host
+    ttl_dns_cache=300,   # DNS cache for 5 min
+    use_dns_cache=True,
+    keepalive_timeout=60,
+)
 
 
 def time_to_seconds(time):
@@ -20,74 +30,104 @@ def time_to_seconds(time):
     return sum(int(x) * 60 ** i for i, x in enumerate(reversed(stringt.split(":"))))
 
 
+# ==================== FAST DOWNLOAD - AUDIO ====================
 async def download_song(link: str) -> str:
+    """Fast audio download with your API"""
     video_id = link.split("v=")[-1].split("&")[0] if "v=" in link else link
     if not video_id or len(video_id) < 3:
         return None
 
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
     file_path = os.path.join(DOWNLOAD_DIR, f"{video_id}.mp3")
+    
+    # ✅ Skip if already downloaded
     if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
         return file_path
 
     try:
-        async with aiohttp.ClientSession() as session:
+        # ✅ Fast session with connection pooling
+        async with aiohttp.ClientSession(connector=FAST_CONNECTOR) as session:
+            params = {
+                "url": video_id,
+                "type": "audio",
+                "api_key": API_KEY
+            }
+            
             async with session.get(
                 f"{API_URL}/download",
-                params={"url": video_id, "type": "audio", "api_key": API_KEY},
-                timeout=aiohttp.ClientTimeout(total=300)
+                params=params,
+                timeout=aiohttp.ClientTimeout(total=60, connect=5)
             ) as resp:
                 if resp.status != 200:
                     return None
+                
+                # ✅ Fast file write with larger chunks
                 with open(file_path, "wb") as f:
-                    async for chunk in resp.content.iter_chunked(131072):
+                    async for chunk in resp.content.iter_chunked(524288):  # 512KB chunks
                         f.write(chunk)
+        
         if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
             return file_path
         return None
-    except Exception:
+        
+    except Exception as e:
+        print(f"Download error: {e}")
         if os.path.exists(file_path):
             try:
                 os.remove(file_path)
-            except Exception:
+            except:
                 pass
         return None
 
 
+# ==================== FAST DOWNLOAD - VIDEO ====================
 async def download_video(link: str) -> str:
+    """Fast video download with your API"""
     video_id = link.split("v=")[-1].split("&")[0] if "v=" in link else link
     if not video_id or len(video_id) < 3:
         return None
 
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
     file_path = os.path.join(DOWNLOAD_DIR, f"{video_id}.mp4")
+    
     if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
         return file_path
 
     try:
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(connector=FAST_CONNECTOR) as session:
+            params = {
+                "url": video_id,
+                "type": "video",
+                "api_key": API_KEY
+            }
+            
             async with session.get(
                 f"{API_URL}/download",
-                params={"url": video_id, "type": "video", "api_key": API_KEY},
-                timeout=aiohttp.ClientTimeout(total=600)
+                params=params,
+                timeout=aiohttp.ClientTimeout(total=120, connect=5)
             ) as resp:
                 if resp.status != 200:
                     return None
+                
                 with open(file_path, "wb") as f:
-                    async for chunk in resp.content.iter_chunked(131072):
+                    async for chunk in resp.content.iter_chunked(524288):  # 512KB
                         f.write(chunk)
+        
         if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
             return file_path
         return None
-    except Exception:
+        
+    except Exception as e:
+        print(f"Video download error: {e}")
         if os.path.exists(file_path):
             try:
                 os.remove(file_path)
-            except Exception:
+            except:
                 pass
         return None
 
 
+# ==================== YOUTUBE API CLASS ====================
 class YouTubeAPI:
     def __init__(self):
         self.base = "https://www.youtube.com/watch?v="
