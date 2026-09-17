@@ -10,19 +10,10 @@ import aiohttp
 
 # ==================== YOUR API ====================
 API_URL = "https://vipxofficial.in"
-API_KEY = "vipxHxpxfKsPXEJGUbjStpCDBNMrrNCU"
+API_KEY = "vipxEyvgz7PZvT77O7PnGu7itFhY6wmy"
 # ==================================================
 
 DOWNLOAD_DIR = "downloads"
-
-# ✅ Fast TCP Connector - Connection pool with caching
-FAST_CONNECTOR = aiohttp.TCPConnector(
-    limit=100,           # Max total connections
-    limit_per_host=50,   # Max per host
-    ttl_dns_cache=300,   # DNS cache for 5 min
-    use_dns_cache=True,
-    keepalive_timeout=60,
-)
 
 
 def time_to_seconds(time):
@@ -45,8 +36,16 @@ async def download_song(link: str) -> str:
         return file_path
 
     try:
-        # ✅ Fast session with connection pooling
-        async with aiohttp.ClientSession(connector=FAST_CONNECTOR) as session:
+        # ✅ Create connector inside function
+        connector = aiohttp.TCPConnector(
+            limit=100,
+            limit_per_host=50,
+            ttl_dns_cache=300,
+            use_dns_cache=True,
+            keepalive_timeout=60,
+        )
+        
+        async with aiohttp.ClientSession(connector=connector) as session:
             params = {
                 "url": video_id,
                 "type": "audio",
@@ -61,9 +60,8 @@ async def download_song(link: str) -> str:
                 if resp.status != 200:
                     return None
                 
-                # ✅ Fast file write with larger chunks
                 with open(file_path, "wb") as f:
-                    async for chunk in resp.content.iter_chunked(524288):  # 512KB chunks
+                    async for chunk in resp.content.iter_chunked(524288):
                         f.write(chunk)
         
         if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
@@ -94,7 +92,15 @@ async def download_video(link: str) -> str:
         return file_path
 
     try:
-        async with aiohttp.ClientSession(connector=FAST_CONNECTOR) as session:
+        connector = aiohttp.TCPConnector(
+            limit=100,
+            limit_per_host=50,
+            ttl_dns_cache=300,
+            use_dns_cache=True,
+            keepalive_timeout=60,
+        )
+        
+        async with aiohttp.ClientSession(connector=connector) as session:
             params = {
                 "url": video_id,
                 "type": "video",
@@ -110,7 +116,7 @@ async def download_video(link: str) -> str:
                     return None
                 
                 with open(file_path, "wb") as f:
-                    async for chunk in resp.content.iter_chunked(524288):  # 512KB
+                    async for chunk in resp.content.iter_chunked(524288):
                         f.write(chunk)
         
         if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
