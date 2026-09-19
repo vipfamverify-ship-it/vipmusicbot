@@ -10,7 +10,7 @@ import aiohttp
 
 API_URL = "https://vipxofficial.in"
 
-API_KEY = "vipxHxpxfKsPXEJGUbjStpCDBNMrrNCU" ## Get This API KEY FROM TELEGRAM BOT USERNAME: @SHRUTIAPIBOT 
+API_KEY = "vipxEyvgz7PZvT77O7PnGu7itFhY6wmy" ## Get This API KEY FROM TELEGRAM BOT USERNAME: @SHRUTIAPIBOT 
 
 DOWNLOAD_DIR = "downloads"
 
