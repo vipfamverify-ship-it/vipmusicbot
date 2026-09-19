@@ -10,7 +10,7 @@ import aiohttp
 
 API_URL = "https://vipxofficial.in"
 
-API_KEY = "vipxEyvgz7PZvT77O7PnGu7itFhY6wmy" ## Get This API KEY FROM TELEGRAM BOT USERNAME: @SHRUTIAPIBOT 
+API_KEY = "vipxEyvgz7PZvT77O7PnGu7itFhY6wmy"
 
 DOWNLOAD_DIR = "downloads"
 
@@ -26,18 +26,31 @@ async def download_song(link: str) -> str:
         return None
 
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-    file_path = os.path.join(DOWNLOAD_DIR, f"{video_id}.mp3")
+    
+    # Cleanup any old files for this video
+    for ext in ['mp3', 'm4a', 'webm']:
+        old = os.path.join(DOWNLOAD_DIR, f"{video_id}.{ext}")
+        if os.path.exists(old):
+            try:
+                os.remove(old)
+            except Exception:
+                pass
+    
+    # Save as .m4a (matches API output)
+    file_path = os.path.join(DOWNLOAD_DIR, f"{video_id}.m4a")
+    
     if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
         return file_path
 
     try:
-        async with aiohttp.ClientSession() as session:
+        timeout = aiohttp.ClientTimeout(total=120, connect=10, sock_read=90)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
             async with session.get(
                 f"{API_URL}/download",
-                params={"url": video_id, "type": "audio", "api_key": API_KEY},
-                timeout=aiohttp.ClientTimeout(total=300)
+                params={"url": video_id, "type": "audio", "api_key": API_KEY}
             ) as resp:
                 if resp.status != 200:
+                    print(f"❌ Audio API error: {resp.status}")
                     return None
                 with open(file_path, "wb") as f:
                     async for chunk in resp.content.iter_chunked(131072):
@@ -45,12 +58,17 @@ async def download_song(link: str) -> str:
         if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
             return file_path
         return None
-    except Exception:
+    except asyncio.TimeoutError:
+        print(f"❌ Audio timeout: {video_id}")
         if os.path.exists(file_path):
-            try:
-                os.remove(file_path)
-            except Exception:
-                pass
+            try: os.remove(file_path)
+            except Exception: pass
+        return None
+    except Exception as e:
+        print(f"❌ Audio error: {e}")
+        if os.path.exists(file_path):
+            try: os.remove(file_path)
+            except Exception: pass
         return None
 
 
@@ -61,17 +79,23 @@ async def download_video(link: str) -> str:
 
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
     file_path = os.path.join(DOWNLOAD_DIR, f"{video_id}.mp4")
-    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-        return file_path
+    
+    # Cleanup old file
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+        except Exception:
+            pass
 
     try:
-        async with aiohttp.ClientSession() as session:
+        timeout = aiohttp.ClientTimeout(total=180, connect=10, sock_read=150)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
             async with session.get(
                 f"{API_URL}/download",
-                params={"url": video_id, "type": "video", "api_key": API_KEY},
-                timeout=aiohttp.ClientTimeout(total=600)
+                params={"url": video_id, "type": "video", "api_key": API_KEY}
             ) as resp:
                 if resp.status != 200:
+                    print(f"❌ Video API error: {resp.status}")
                     return None
                 with open(file_path, "wb") as f:
                     async for chunk in resp.content.iter_chunked(131072):
@@ -79,12 +103,17 @@ async def download_video(link: str) -> str:
         if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
             return file_path
         return None
-    except Exception:
+    except asyncio.TimeoutError:
+        print(f"❌ Video timeout: {video_id}")
         if os.path.exists(file_path):
-            try:
-                os.remove(file_path)
-            except Exception:
-                pass
+            try: os.remove(file_path)
+            except Exception: pass
+        return None
+    except Exception as e:
+        print(f"❌ Video error: {e}")
+        if os.path.exists(file_path):
+            try: os.remove(file_path)
+            except Exception: pass
         return None
 
 
